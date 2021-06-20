@@ -7,6 +7,11 @@ export const ok = (data: Record<string, any>): HttpResponse => ({
   statusCode: 200
 })
 
+export const noContent = (): HttpResponse => ({
+  body: {},
+  statusCode: 204
+})
+
 export const badRequest = (error: Error): HttpResponse => ({
   body: error,
   statusCode: 400
