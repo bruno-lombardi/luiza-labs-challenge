@@ -93,4 +93,59 @@ describe('CustomerMongoRepository', () => {
       expect(customer).toBeFalsy()
     })
   })
+
+  describe('updateCustomer', () => {
+    it('should update the customer data if the id provided exists', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const updateData = {
+        id: fakeCustomerId.toHexString(),
+        name: 'new_name',
+        email: 'new_email@email.com'
+      }
+      const customer = await sut.updateCustomer(updateData)
+      expect(customer.id).toBeTruthy()
+      expect(customer.name).toBe('new_name')
+      expect(customer.email).toBe('new_email@email.com')
+    })
+
+    it('should return null if id provided does not exists', async () => {
+      const sut = makeSut()
+      const updateData = {
+        id: new ObjectID().toHexString(),
+        name: 'new_name',
+        email: 'new_email@email.com'
+      }
+      const customer = await sut.updateCustomer(updateData)
+      expect(customer).toBeFalsy()
+    })
+  })
+
+  describe('deleteCustomerById', () => {
+    it('should delete the customer if the id provided exists', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+
+      const isDeleted = await sut.deleteCustomerById(
+        fakeCustomerId.toHexString()
+      )
+      expect(isDeleted).toBeTruthy()
+    })
+
+    it('should return null if id provided does not exists', async () => {
+      const sut = makeSut()
+      const customer = await sut.deleteCustomerById(
+        new ObjectID().toHexString()
+      )
+      expect(customer).toBeFalsy()
+    })
+  })
 })

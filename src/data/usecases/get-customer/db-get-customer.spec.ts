@@ -32,7 +32,7 @@ const makeSut = (): SutTypes => {
   }
 }
 
-describe('DbAuthentication UseCase', () => {
+describe('DbGetCustomer UseCase', () => {
   it('should call LoadCustomerByIdRepository with correct email', async () => {
     const { sut, loadCustomerByIdRepositoryStub } = makeSut()
     const loadByIdSpy = jest.spyOn(loadCustomerByIdRepositoryStub, 'loadById')
