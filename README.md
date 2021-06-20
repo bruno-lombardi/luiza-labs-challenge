@@ -1,5 +1,5 @@
 <h2 align="center">
-  Clean Architecture with Typescript 🏛
+  Favorite Products API
 </h2>
 
 <p align="center">
@@ -19,13 +19,10 @@ The following tools and packages were used to develop this project:
 - [Jest](https://jestjs.io)
 - [MongoDB](https://www.mongodb.com)
 - [Travis](https://travis-ci.org)
-- [Swagger](https://swagger.io)
 
 ## 💻 Project
 
-This project is a study of multiple software development principles that compose the CLEAN architecture, created by Robert C. Martin. These principles and best practices are applied to create a robust and maintainable code base.
-
-This API will handle **surveys** creation, listing, responding and survey results, including user registration and authentication.
+This project is an HTTP API that allow customers to save their favorite products.
 
 ## ☀️ Principles
 
