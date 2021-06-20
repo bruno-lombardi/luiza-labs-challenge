@@ -4,7 +4,7 @@ import { SignUpController } from './sign-up-controller'
 import {
   AddCustomer,
   AddCustomerModel
-} from '../../../domain/usecases/add-customer'
+} from '../../../domain/usecases/customer/add-customer'
 import { CustomerModel } from '../../../domain/models/customer'
 import { HttpRequest } from '../../protocols/http'
 import { badRequest, ok, serverError } from '../../helpers/http-helper'

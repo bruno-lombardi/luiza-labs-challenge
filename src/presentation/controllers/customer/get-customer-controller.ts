@@ -18,7 +18,7 @@ export class GetCustomerController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.body)
+      const error = this.validation.validate(httpRequest.params)
       if (error) {
         return badRequest(error)
       }

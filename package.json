@@ -38,13 +38,14 @@
   },
   "scripts": {
     "start": "node dist/main/server.js",
+    "debug": "node --inspect=0.0.0.0:9222 --nolazy ./dist/main/server.js",
     "prebuild": "rimraf dist",
     "build": "tsc",
     "dev": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "yarn test --watch -c jest-unit-config.ts",
-    "test:integration": "yarn test --watch -c jest-integration-config.ts",
+    "test:integration": "jest --passWithNoTests --runInBand --watch -c jest-integration-config.ts",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage",
     "postinstall": "husky install"

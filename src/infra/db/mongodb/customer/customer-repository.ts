@@ -1,5 +1,7 @@
+import { ObjectID } from 'mongodb'
 import { AddCustomerRepository } from '../../../../data/protocols/db/customer/add-customer-repository'
 import { LoadCustomerByEmailRepository } from '../../../../data/protocols/db/customer/load-customer-by-email-repository'
+import { LoadCustomerByIdRepository } from '../../../../data/protocols/db/customer/load-customer-by-id-repository'
 import {
   UpdateAccessTokenModel,
   UpdateAccessTokenRepository
@@ -12,6 +14,7 @@ export class CustomerMongoRepository
   implements
     AddCustomerRepository,
     LoadCustomerByEmailRepository,
+    LoadCustomerByIdRepository,
     UpdateAccessTokenRepository {
   async add(customerData: AddCustomerModel): Promise<CustomerModel> {
     const customerCollection = await mongoHelper.getCollection('customers')
@@ -22,6 +25,13 @@ export class CustomerMongoRepository
   async loadByEmail(email: string): Promise<CustomerModel> {
     const customerCollection = await mongoHelper.getCollection('customers')
     const customer = await customerCollection.findOne({ email })
+    return mongoHelper.map<CustomerModel>(customer)
+  }
+
+  async loadById(customerId: string): Promise<CustomerModel> {
+    const customerCollection = await mongoHelper.getCollection('customers')
+    const _id = new ObjectID(customerId)
+    const customer = await customerCollection.findOne({ _id })
     return mongoHelper.map<CustomerModel>(customer)
   }
 

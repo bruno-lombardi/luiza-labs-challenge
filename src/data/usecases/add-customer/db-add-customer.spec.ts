@@ -1,5 +1,5 @@
 import { CustomerModel } from '../../../domain/models/customer'
-import { AddCustomerModel } from '../../../domain/usecases/add-customer'
+import { AddCustomerModel } from '../../../domain/usecases/customer/add-customer'
 import { AddCustomerRepository } from '../../protocols/db/customer/add-customer-repository'
 import { DbAddCustomer } from './db-add-customer'
 
