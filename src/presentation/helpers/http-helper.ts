@@ -8,7 +8,7 @@ export const ok = (data: Record<string, any>): HttpResponse => ({
 })
 
 export const noContent = (): HttpResponse => ({
-  body: {},
+  body: undefined,
   statusCode: 204
 })
 

@@ -18,13 +18,16 @@ export class UpdateCustomerController implements Controller {
 
   async handle(httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      const error = this.validation.validate(httpRequest.params)
+      const error = this.validation.validate({
+        ...httpRequest.params,
+        ...httpRequest.body
+      })
       if (error) {
         return badRequest(error)
       }
-      const customerId = httpRequest.params.customerId
+
       const updateData = {
-        id: customerId,
+        id: httpRequest.params.customerId,
         name: httpRequest.body.name,
         email: httpRequest.body.email
       }
