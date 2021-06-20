@@ -5,7 +5,7 @@ import {
   UpdateAccessTokenRepository
 } from '../../../../data/protocols/db/customer/update-access-token-repository'
 import { CustomerModel } from '../../../../domain/models/customer'
-import { AddCustomerModel } from '../../../../domain/usecases/add-customer'
+import { AddCustomerModel } from '../../../../domain/usecases/customer/add-customer'
 import { mongoHelper } from '../helpers/mongo-helper'
 
 export class CustomerMongoRepository

@@ -46,4 +46,3 @@ This project is under MIT license. Check the [LICENSE](LICENSE.md) for more deta
 
 ---
 
-Made with ♥ by Bruno Lombardi, following [Rodrigo Manguinho](https://github.com/rmanguinho)'s [Clean Architecture with Typescript course](https://www.udemy.com/course/tdd-com-mango/?referralCode=B53CE5CA2B9AFA5A6FA1).

@@ -1,7 +1,7 @@
 import { badRequest, ok, serverError } from '../../helpers/http-helper'
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
-import { AddCustomer } from '../../../domain/usecases/add-customer'
+import { AddCustomer } from '../../../domain/usecases/customer/add-customer'
 import { Validation } from '../../protocols/validation'
 
 interface SignUpRequestBody {

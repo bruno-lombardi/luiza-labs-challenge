@@ -5,4 +5,5 @@ export interface HttpResponse {
 
 export interface HttpRequest {
   body?: Record<string, any>
+  params?: Record<string, any>
 }

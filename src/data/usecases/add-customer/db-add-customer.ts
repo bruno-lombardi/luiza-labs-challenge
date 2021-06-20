@@ -2,7 +2,7 @@ import { CustomerModel } from '../../../domain/models/customer'
 import {
   AddCustomer,
   AddCustomerModel
-} from '../../../domain/usecases/add-customer'
+} from '../../../domain/usecases/customer/add-customer'
 import { AddCustomerRepository } from '../../protocols/db/customer/add-customer-repository'
 
 export class DbAddCustomer implements AddCustomer {

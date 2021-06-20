@@ -17,6 +17,11 @@ export const unauthorized = (): HttpResponse => ({
   statusCode: 401
 })
 
+export const notFound = (error: Error): HttpResponse => ({
+  body: error,
+  statusCode: 404
+})
+
 export const serverError = (error: Error): HttpResponse => ({
   body: new ServerError(error.stack),
   statusCode: 500
