@@ -5,7 +5,7 @@ import { AuthMiddleware } from '../../../presentation/middlewares/auth-middlewar
 import { Middleware } from '../../../presentation/protocols/middleware'
 import jwt from '../../config/jwt'
 
-export const makeAuthMiddleware = (role?: string): Middleware => {
+export const makeAuthMiddleware = (): Middleware => {
   const jwtAdapter = new JwtAdapter(jwt.jwtSecret)
   const accountMongoRepository = new CustomerMongoRepository()
   const loadCustomerByToken = new DbLoadCustomerByToken(

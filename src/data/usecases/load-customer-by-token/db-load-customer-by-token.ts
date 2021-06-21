@@ -10,9 +10,18 @@ export class DbLoadCustomerByToken implements LoadCustomerByToken {
   ) {}
 
   async loadCustomer(accessToken: string): Promise<CustomerModel> {
-    const customer = await this.loadCustomerByTokenRepository.loadCustomerByToken(
-      accessToken
-    )
-    return customer
+    let isTokenVerified: string
+    try {
+      isTokenVerified = await this.decrypter.decrypt(accessToken)
+    } catch (err) {
+      return null
+    }
+    if (isTokenVerified) {
+      const customer = await this.loadCustomerByTokenRepository.loadCustomerByToken(
+        accessToken
+      )
+      return customer
+    }
+    return null
   }
 }

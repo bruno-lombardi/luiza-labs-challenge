@@ -3,8 +3,25 @@ import { mongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 import request from 'supertest'
 import app from '../config/app'
 import { CustomerModel } from '../../domain/models/customer'
+import { sign } from 'jsonwebtoken'
+import jwtConfig from '../config/jwt'
 
 let customerCollection: Collection
+
+const makeValidAccessToken = async (userId: ObjectID): Promise<string> => {
+  const accessToken = sign({ id: userId.toHexString() }, jwtConfig.jwtSecret)
+  await customerCollection.updateOne(
+    {
+      _id: userId
+    },
+    {
+      $set: {
+        accessToken
+      }
+    }
+  )
+  return `Bearer ${accessToken}`
+}
 
 describe('Customer Routes', () => {
   beforeAll(async () => {
@@ -25,8 +42,10 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
       await request(app)
         .get(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .expect(200)
     })
 
@@ -36,8 +55,10 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
       await request(app)
         .get(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .expect(200)
         .then((res) => {
           const customer: CustomerModel = res.body
@@ -47,13 +68,28 @@ describe('Customer Routes', () => {
         })
     })
 
-    it('should return 400 on GET /customers/:customerId when customer id is not valid object id', async () => {
-      await request(app).get(`/api/customers/any_id`).expect(400)
+    it('should return 401 on GET /customers/:customerId without authorization header', async () => {
+      const fakeId = new ObjectID().toHexString()
+      await request(app).get(`/api/customers/${fakeId}`).expect(401)
     })
 
-    it('should return 404 on GET /customers/:customerId when customer id is not found', async () => {
-      const fakeId = new ObjectID().toHexString()
-      await request(app).get(`/api/customers/${fakeId}`).expect(404)
+    it('should return 403 on GET /customers/:customerId when access token does not belongs to customer', async () => {
+      const anotherCustomerResult = await customerCollection.insertOne({
+        name: 'Ana',
+        email: 'ana@kuppi.com.br'
+      })
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const anotherCustomerId = anotherCustomerResult.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .get(`/api/customers/${anotherCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
+        .expect(403)
     })
   })
 
@@ -64,8 +100,11 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
       await request(app)
         .put(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .send({
           name: 'Ana',
           email: 'ana@kuppi.com.br'
@@ -79,8 +118,11 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
       await request(app)
         .put(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .send({
           name: 'Ana',
           email: 'ana@kuppi.com.br'
@@ -94,19 +136,27 @@ describe('Customer Routes', () => {
         })
     })
 
-    it('should return 400 on PUT /customers/:customerId when customer id is not valid object id', async () => {
-      await request(app).put(`/api/customers/any_id`).expect(400)
-    })
+    it('should return 403 on PUT /customers/:customerId when access token that belongs to other user', async () => {
+      const anotherCustomerResult = await customerCollection.insertOne({
+        name: 'Ana',
+        email: 'ana@kuppi.com.br'
+      })
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const anotherCustomerId = anotherCustomerResult.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
 
-    it('should return 404 on PUT /customers/:customerId when customer id is not found', async () => {
-      const fakeId = new ObjectID().toHexString()
       await request(app)
-        .put(`/api/customers/${fakeId}`)
+        .put(`/api/customers/${anotherCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .send({
           name: 'Ana',
           email: 'ana@kuppi.com.br'
         })
-        .expect(404)
+        .expect(403)
     })
   })
 
@@ -117,8 +167,11 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
       await request(app)
         .delete(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .expect(204)
     })
 
@@ -128,22 +181,39 @@ describe('Customer Routes', () => {
         email: 'bruno@kuppi.com.br'
       })
       const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
       await request(app)
         .delete(`/api/customers/${fakeCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
         .expect(204)
         .then((res) => {
-          console.log(res.body)
           expect(Object.keys(res.body).length).toBeFalsy()
         })
     })
 
-    it('should return 400 on DELETE /customers/:customerId when customer id is not valid object id', async () => {
-      await request(app).delete(`/api/customers/any_id`).expect(400)
+    it('should return 401 on DELETE /customers/:customerId without authorization', async () => {
+      const fakeId = new ObjectID().toHexString()
+      await request(app).delete(`/api/customers/${fakeId}`).expect(401)
     })
 
-    it('should return 404 on DELETE /customers/:customerId when customer id is not found', async () => {
-      const fakeId = new ObjectID().toHexString()
-      await request(app).delete(`/api/customers/${fakeId}`).expect(404)
+    it('should return 403 on DELETE /customers/:customerId when customer id is not found', async () => {
+      const anotherCustomerResult = await customerCollection.insertOne({
+        name: 'Ana',
+        email: 'ana@kuppi.com.br'
+      })
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const anotherCustomerId = anotherCustomerResult.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .delete(`/api/customers/${anotherCustomerId.toHexString()}`)
+        .set('authorization', accessToken)
+        .expect(403)
     })
   })
 })

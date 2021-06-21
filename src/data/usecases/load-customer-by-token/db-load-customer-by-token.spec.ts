@@ -12,7 +12,7 @@ const makeFakeCustomer = (): CustomerModel => ({
 const makeDecrypter = (): Decrypter => {
   class DecrypterStub implements Decrypter {
     async decrypt(ciphertext: string): Promise<string> {
-      return await new Promise((resolve) => resolve('any_value'))
+      return await new Promise((resolve) => resolve('any_id'))
     }
   }
   return new DecrypterStub()
@@ -50,14 +50,38 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbLoadCustomerByToken UseCase', () => {
+  it('should return a customer if token is valid', async () => {
+    const { sut } = makeSut()
+    const customer = await sut.loadCustomer('any_token')
+    expect(customer).toEqual(makeFakeCustomer())
+  })
+
+  it('should call Decrypter with correct token', async () => {
+    const { sut, decrypterStub } = makeSut()
+    const loadCustomerByTokenSpy = jest.spyOn(decrypterStub, 'decrypt')
+    await sut.loadCustomer('any_token')
+    expect(loadCustomerByTokenSpy).toHaveBeenLastCalledWith('any_token')
+  })
+
   it('should call LoadCustomerByTokenRepository with correct token', async () => {
     const { sut, loadCustomerByTokenRepositoryStub } = makeSut()
     const loadCustomerByTokenSpy = jest.spyOn(
       loadCustomerByTokenRepositoryStub,
       'loadCustomerByToken'
     )
-    await sut.loadCustomer('any_id')
-    expect(loadCustomerByTokenSpy).toHaveBeenLastCalledWith('any_id')
+    await sut.loadCustomer('any_token')
+    expect(loadCustomerByTokenSpy).toHaveBeenLastCalledWith('any_token')
+  })
+
+  it('should return null if Decrypter throws', async () => {
+    const { sut, decrypterStub } = makeSut()
+    jest
+      .spyOn(decrypterStub, 'decrypt')
+      .mockReturnValueOnce(
+        new Promise((resolve, reject) => reject(new Error()))
+      )
+    const accessToken = await sut.loadCustomer('any_id')
+    expect(accessToken).toBe(null)
   })
 
   it('should throw if LoadCustomerByTokenRepository throws', async () => {

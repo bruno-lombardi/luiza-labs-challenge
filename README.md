@@ -42,4 +42,3 @@ This project is an HTTP API that allow customers to save their favorite products
 This project is under MIT license. Check the [LICENSE](LICENSE.md) for more details.
 
 ---
-

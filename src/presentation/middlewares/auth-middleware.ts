@@ -1,6 +1,11 @@
 import { LoadCustomerByToken } from '../../domain/usecases/customer/load-customer-by-token'
 import AccessDeniedError from '../errors/access-denied-error'
-import { forbidden, ok, serverError } from '../helpers/http-helper'
+import {
+  forbidden,
+  ok,
+  serverError,
+  unauthorized
+} from '../helpers/http-helper'
 import { HttpRequest, HttpResponse } from '../protocols/http'
 import { Middleware } from '../protocols/middleware'
 
@@ -9,12 +14,17 @@ export class AuthMiddleware implements Middleware {
 
   async handle(request: HttpRequest): Promise<HttpResponse> {
     try {
-      const accessToken = request.headers?.authorization
+      const authorization = request.headers?.authorization
+      const customerId = request.params?.customerId
+
+      if (!authorization) return unauthorized()
+
+      const accessToken = authorization.split(' ')[1]
       if (accessToken) {
         const customer = await this.loadCustomerByToken.loadCustomer(
           accessToken
         )
-        if (customer) {
+        if (customer && customer.id === customerId) {
           return ok({ customerId: customer.id })
         }
       }

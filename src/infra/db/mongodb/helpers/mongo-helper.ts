@@ -1,4 +1,4 @@
-import { Collection, MongoClient } from 'mongodb'
+import { Collection, MongoClient, ObjectID } from 'mongodb'
 
 export const mongoHelper = {
   client: (null as unknown) as MongoClient,
@@ -28,8 +28,10 @@ export const mongoHelper = {
 
   map<T>(document: any): T {
     if (document) {
-      const { _id, ...rest } = document
-      return { id: _id, ...rest }
+      const _id = document._id as ObjectID
+      const convertedId = _id.toHexString()
+      Reflect.deleteProperty(document, '_id')
+      return { id: convertedId, ...document }
     }
     return null
   }
