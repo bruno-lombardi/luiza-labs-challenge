@@ -148,4 +148,23 @@ describe('CustomerMongoRepository', () => {
       expect(customer).toBeFalsy()
     })
   })
+
+  describe('loadCustomerByToken', () => {
+    it('should delete the customer if the id provided exists', async () => {
+      const sut = makeSut()
+      await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token'
+      })
+      const customer = await sut.loadCustomerByToken('any_token')
+      expect(customer).toBeTruthy()
+    })
+
+    it('should return null if id provided does not exists', async () => {
+      const sut = makeSut()
+      const customer = await sut.loadCustomerByToken('invalid_token')
+      expect(customer).toBeFalsy()
+    })
+  })
 })

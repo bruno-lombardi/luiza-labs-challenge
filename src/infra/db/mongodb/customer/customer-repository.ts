@@ -3,6 +3,7 @@ import { AddCustomerRepository } from '../../../../data/protocols/db/customer/ad
 import { DeleteCustomerRepository } from '../../../../data/protocols/db/customer/delete-customer-repository'
 import { LoadCustomerByEmailRepository } from '../../../../data/protocols/db/customer/load-customer-by-email-repository'
 import { LoadCustomerByIdRepository } from '../../../../data/protocols/db/customer/load-customer-by-id-repository'
+import { LoadCustomerByTokenRepository } from '../../../../data/protocols/db/customer/load-customer-by-token-repository'
 import {
   UpdateAccessTokenModel,
   UpdateAccessTokenRepository
@@ -18,6 +19,7 @@ export class CustomerMongoRepository
     AddCustomerRepository,
     LoadCustomerByEmailRepository,
     LoadCustomerByIdRepository,
+    LoadCustomerByTokenRepository,
     UpdateAccessTokenRepository,
     UpdateCustomerRepository,
     DeleteCustomerRepository {
@@ -78,5 +80,11 @@ export class CustomerMongoRepository
       _id
     })
     return result.deletedCount > 0
+  }
+
+  async loadCustomerByToken(accessToken: string): Promise<CustomerModel> {
+    const customerCollection = await mongoHelper.getCollection('customers')
+    const customer = await customerCollection.findOne({ accessToken })
+    return mongoHelper.map<CustomerModel>(customer)
   }
 }
