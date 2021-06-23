@@ -167,4 +167,240 @@ describe('CustomerMongoRepository', () => {
       expect(customer).toBeFalsy()
     })
   })
+
+  describe('findCustomerFavoriteProduct', () => {
+    it('should return the product model if it exists in favorite products', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token',
+        favoriteProducts: [
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_01',
+            title: 'any_title1',
+            reviewScore: 4.0
+          },
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_02',
+            title: 'any_title2',
+            reviewScore: 4.0
+          }
+        ]
+      })
+      const fakeCustomerId = result.insertedId
+      const product = await sut.findCustomerFavoriteProduct(
+        'product_01',
+        fakeCustomerId
+      )
+      expect(product).toEqual({
+        price: 999.0,
+        image: 'any_image_url',
+        brand: 'any_brand',
+        id: 'product_01',
+        title: 'any_title1',
+        reviewScore: 4.0
+      })
+
+      const product2 = await sut.findCustomerFavoriteProduct(
+        'product_02',
+        fakeCustomerId
+      )
+      expect(product2).toEqual({
+        price: 999.0,
+        image: 'any_image_url',
+        brand: 'any_brand',
+        id: 'product_02',
+        title: 'any_title2',
+        reviewScore: 4.0
+      })
+    })
+
+    it('should return null if product id provided does not exists', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token',
+        favoriteProducts: [
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_01',
+            title: 'any_title1',
+            reviewScore: 4.0
+          },
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_02',
+            title: 'any_title2',
+            reviewScore: 4.0
+          }
+        ]
+      })
+      const fakeCustomerId = result.insertedId
+      const product = await sut.findCustomerFavoriteProduct(
+        'product_03',
+        fakeCustomerId
+      )
+      expect(product).toBeFalsy()
+    })
+
+    it('should return null if customer id provided does not exists', async () => {
+      const sut = makeSut()
+      const fakeCustomerId = new ObjectID().toHexString()
+      const product = await sut.findCustomerFavoriteProduct(
+        'product_03',
+        fakeCustomerId
+      )
+      expect(product).toBeFalsy()
+    })
+  })
+
+  describe('addFavoriteProductToCustomer', () => {
+    it('should return the updated customer if valid customer id', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token'
+      })
+      const fakeCustomerId = result.insertedId
+      const customer = await sut.addFavoriteProductToCustomer(
+        {
+          price: 999.0,
+          image: 'any_image_url',
+          brand: 'any_brand',
+          id: 'product_01',
+          title: 'any_title1',
+          reviewScore: 4.0
+        },
+        fakeCustomerId
+      )
+      expect(customer).toBeTruthy()
+      expect(customer.favoriteProducts.length).toBe(1)
+      expect(customer.favoriteProducts[0]).toEqual({
+        price: 999.0,
+        image: 'any_image_url',
+        brand: 'any_brand',
+        id: 'product_01',
+        title: 'any_title1',
+        reviewScore: 4.0
+      })
+    })
+
+    it('should return null if customer id provided does not exists', async () => {
+      const sut = makeSut()
+      const fakeCustomerId = new ObjectID().toHexString()
+      const customer = await sut.addFavoriteProductToCustomer(
+        {
+          price: 999.0,
+          image: 'any_image_url',
+          brand: 'any_brand',
+          id: 'product_01',
+          title: 'any_title1',
+          reviewScore: 4.0
+        },
+        fakeCustomerId
+      )
+      expect(customer).toBeFalsy()
+    })
+  })
+
+  describe('removeFavoriteProductFromCustomer', () => {
+    it('should remove the favorited product from customer when valid customer and product id', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token',
+        favoriteProducts: [
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_01',
+            title: 'any_title1',
+            reviewScore: 4.0
+          },
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_02',
+            title: 'any_title2',
+            reviewScore: 4.0
+          }
+        ]
+      })
+      const fakeCustomerId = result.insertedId
+      const customer = await sut.removeFavoriteProductFromCustomer(
+        'product_02',
+        fakeCustomerId
+      )
+      expect(customer).toBeTruthy()
+      expect(customer.favoriteProducts.length).toBe(1)
+      expect(customer.favoriteProducts[0]).toEqual({
+        price: 999.0,
+        image: 'any_image_url',
+        brand: 'any_brand',
+        id: 'product_01',
+        title: 'any_title1',
+        reviewScore: 4.0
+      })
+    })
+
+    it('should return found customer if product id provided does not exists', async () => {
+      const sut = makeSut()
+      const result = await customerCollection.insertOne({
+        name: 'any_name',
+        email: 'any_email@email.com',
+        accessToken: 'any_token',
+        favoriteProducts: [
+          {
+            price: 999.0,
+            image: 'any_image_url',
+            brand: 'any_brand',
+            id: 'product_01',
+            title: 'any_title1',
+            reviewScore: 4.0
+          }
+        ]
+      })
+      const fakeCustomerId = result.insertedId
+      const customer = await sut.removeFavoriteProductFromCustomer(
+        'product_02',
+        fakeCustomerId
+      )
+      expect(customer).toBeTruthy()
+      expect(customer.favoriteProducts.length).toBe(1)
+      expect(customer.favoriteProducts[0]).toEqual({
+        price: 999.0,
+        image: 'any_image_url',
+        brand: 'any_brand',
+        id: 'product_01',
+        title: 'any_title1',
+        reviewScore: 4.0
+      })
+    })
+
+    it('should return null if customer id provided does not exists', async () => {
+      const sut = makeSut()
+      const fakeCustomerId = new ObjectID().toHexString()
+      const customer = await sut.removeFavoriteProductFromCustomer(
+        'product_01',
+        fakeCustomerId
+      )
+      expect(customer).toBeFalsy()
+    })
+  })
 })

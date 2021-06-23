@@ -29,8 +29,14 @@ export const mongoHelper = {
   map<T>(document: any): T {
     if (document) {
       const _id = document._id as ObjectID
-      const convertedId = _id.toHexString()
-      Reflect.deleteProperty(document, '_id')
+      let convertedId: string
+      if (_id) {
+        convertedId = _id.toHexString()
+        Reflect.deleteProperty(document, '_id')
+      } else {
+        convertedId = document.id
+      }
+
       return { id: convertedId, ...document }
     }
     return null

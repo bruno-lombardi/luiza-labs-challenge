@@ -44,7 +44,7 @@
     "dev": "sucrase-node src/main/server.ts",
     "test": "jest --passWithNoTests --silent --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
-    "test:unit": "yarn test --watch -c jest-unit-config.ts",
+    "test:unit": "jest --passWithNoTests --runInBand --watch -c jest-unit-config.ts",
     "test:integration": "jest --passWithNoTests --runInBand --watch -c jest-integration-config.ts",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage",

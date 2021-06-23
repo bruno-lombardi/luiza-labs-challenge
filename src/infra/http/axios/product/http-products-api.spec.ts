@@ -74,7 +74,7 @@ describe('HttpProductsApi', () => {
     })
   })
 
-  describe('getProductById', () => {
+  describe('getProductById()', () => {
     it('should return a product when valid id', async () => {
       const { sut, httpClientStub } = makeSut()
       jest
