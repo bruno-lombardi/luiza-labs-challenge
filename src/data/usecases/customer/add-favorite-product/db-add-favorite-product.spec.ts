@@ -4,6 +4,7 @@ import { AddFavoriteProductRepository } from '../../../protocols/db/customer/add
 import { FindCustomerFavoriteProductRepository } from '../../../protocols/db/customer/find-customer-favorite-product-repository'
 import { GetProductByIdRepository } from '../../../protocols/http/product/get-product-repository'
 import { DbAddFavoriteProduct } from './db-add-favorite-product'
+
 const makeFakeProduct = (): ProductModel => ({
   price: 999.0,
   image: 'any_image_url',

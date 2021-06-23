@@ -22,14 +22,19 @@ export const unauthorized = (): HttpResponse => ({
   statusCode: 401
 })
 
+export const forbidden = (error: Error): HttpResponse => ({
+  body: error,
+  statusCode: 403
+})
+
 export const notFound = (error: Error): HttpResponse => ({
   body: error,
   statusCode: 404
 })
 
-export const forbidden = (error: Error): HttpResponse => ({
+export const conflict = (error: Error): HttpResponse => ({
   body: error,
-  statusCode: 403
+  statusCode: 409
 })
 
 export const serverError = (error: Error): HttpResponse => ({
