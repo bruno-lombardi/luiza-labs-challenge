@@ -4,7 +4,8 @@ import { DbGetCustomer } from './db-get-customer'
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'any_id',
   name: 'any_name',
-  email: 'any_email@email.com'
+  email: 'any_email@email.com',
+  favoriteProducts: []
 })
 
 const makeLoadCustomerByIdRepository = (): LoadCustomerByIdRepository => {

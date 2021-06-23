@@ -6,7 +6,8 @@ import { DbLoadCustomerByToken } from './db-load-customer-by-token'
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'any_id',
   name: 'any_name',
-  email: 'any_email@email.com'
+  email: 'any_email@email.com',
+  favoriteProducts: []
 })
 
 const makeDecrypter = (): Decrypter => {

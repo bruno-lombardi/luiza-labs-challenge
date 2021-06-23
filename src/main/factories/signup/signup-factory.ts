@@ -1,4 +1,4 @@
-import { DbAddCustomer } from '../../../data/usecases/add-customer/db-add-customer'
+import { DbAddCustomer } from '../../../data/usecases/customer/add-customer/db-add-customer'
 import { CustomerMongoRepository } from '../../../infra/db/mongodb/customer/customer-repository'
 import { LogMongoRepository } from '../../../infra/db/mongodb/log/log-repository'
 import { SignUpController } from '../../../presentation/controllers/signup/sign-up-controller'

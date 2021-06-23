@@ -6,7 +6,8 @@ import { DbUpdateCustomer } from './db-update-costumer'
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'any_id',
   name: 'any_name',
-  email: 'any_email@email.com'
+  email: 'any_email@email.com',
+  favoriteProducts: []
 })
 
 const makeFakeUpdateCustomerModel = (): UpdateCustomerModel => ({
@@ -43,14 +44,15 @@ const makeSut = (): SutTypes => {
 }
 
 describe('DbUpdateCustomer UseCase', () => {
-  it('should call UpdateCustomerRepository with correct email', async () => {
+  it('should call UpdateCustomerRepository with correct update data', async () => {
     const { sut, updateCustomerRepository } = makeSut()
     const updateCustomerSpy = jest.spyOn(
       updateCustomerRepository,
       'updateCustomer'
     )
-    await sut.updateCustomer(makeFakeUpdateCustomerModel())
-    expect(updateCustomerSpy).toHaveBeenLastCalledWith(makeFakeCustomer())
+    const updateData = makeFakeUpdateCustomerModel()
+    await sut.updateCustomer(updateData)
+    expect(updateCustomerSpy).toHaveBeenLastCalledWith(updateData)
   })
 
   it('should throw if UpdateCustomerRepository throws', async () => {

@@ -19,7 +19,8 @@ interface SutTypes {
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'valid_id',
   name: 'valid_name',
-  email: 'valid_email@email.com'
+  email: 'valid_email@email.com',
+  favoriteProducts: []
 })
 
 const makeAddCustomer = (): AddCustomer => {

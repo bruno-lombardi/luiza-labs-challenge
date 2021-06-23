@@ -1,6 +1,6 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { AddCustomerModel } from '../../../domain/usecases/customer/add-customer'
-import { AddCustomerRepository } from '../../protocols/db/customer/add-customer-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { AddCustomerModel } from '../../../../domain/usecases/customer/add-customer'
+import { AddCustomerRepository } from '../../../protocols/db/customer/add-customer-repository'
 import { DbAddCustomer } from './db-add-customer'
 
 const makeFakeCustomerData = (): AddCustomerModel => ({
@@ -11,7 +11,8 @@ const makeFakeCustomerData = (): AddCustomerModel => ({
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'valid_id',
   name: 'valid_name',
-  email: 'valid_email@email.com'
+  email: 'valid_email@email.com',
+  favoriteProducts: []
 })
 
 const makeAddCustomerRepository = (): AddCustomerRepository => {
