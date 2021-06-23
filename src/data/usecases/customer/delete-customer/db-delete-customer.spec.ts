@@ -1,4 +1,4 @@
-import { DeleteCustomerRepository } from '../../protocols/db/customer/delete-customer-repository'
+import { DeleteCustomerRepository } from '../../../protocols/db/customer/delete-customer-repository'
 import { DbDeleteCustomer } from './db-delete-customer'
 const makeDeleteCustomerRepository = (): DeleteCustomerRepository => {
   class DeleteCustomerRepositoryStub implements DeleteCustomerRepository {

@@ -1,5 +1,5 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { LoadCustomerByIdRepository } from '../../protocols/db/customer/load-customer-by-id-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { LoadCustomerByIdRepository } from '../../../protocols/db/customer/load-customer-by-id-repository'
 import { DbGetCustomer } from './db-get-customer'
 const makeFakeCustomer = (): CustomerModel => ({
   id: 'any_id',

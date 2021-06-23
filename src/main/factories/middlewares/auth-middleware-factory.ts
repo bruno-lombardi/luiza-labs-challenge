@@ -1,4 +1,4 @@
-import { DbLoadCustomerByToken } from '../../../data/usecases/load-customer-by-token/db-load-customer-by-token'
+import { DbLoadCustomerByToken } from '../../../data/usecases/customer/load-customer-by-token/db-load-customer-by-token'
 import { JwtAdapter } from '../../../infra/cryptography/jwt-adapter/jwt-adapter'
 import { CustomerMongoRepository } from '../../../infra/db/mongodb/customer/customer-repository'
 import { AuthMiddleware } from '../../../presentation/middlewares/auth-middleware'

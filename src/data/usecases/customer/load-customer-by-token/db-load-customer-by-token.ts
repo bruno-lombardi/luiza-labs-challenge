@@ -1,7 +1,7 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { LoadCustomerByToken } from '../../../domain/usecases/customer/load-customer-by-token'
-import { Decrypter } from '../../protocols/crypto/decrypter'
-import { LoadCustomerByTokenRepository } from '../../protocols/db/customer/load-customer-by-token-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { LoadCustomerByToken } from '../../../../domain/usecases/customer/load-customer-by-token'
+import { Decrypter } from '../../../protocols/crypto/decrypter'
+import { LoadCustomerByTokenRepository } from '../../../protocols/db/customer/load-customer-by-token-repository'
 
 export class DbLoadCustomerByToken implements LoadCustomerByToken {
   constructor(

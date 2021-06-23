@@ -1,4 +1,4 @@
-import { DbDeleteCustomer } from '../../../data/usecases/delete-customer/db-delete-customer'
+import { DbDeleteCustomer } from '../../../data/usecases/customer/delete-customer/db-delete-customer'
 import { CustomerMongoRepository } from '../../../infra/db/mongodb/customer/customer-repository'
 import { LogMongoRepository } from '../../../infra/db/mongodb/log/log-repository'
 import { DeleteCustomerController } from '../../../presentation/controllers/customer/delete-customer-controller'

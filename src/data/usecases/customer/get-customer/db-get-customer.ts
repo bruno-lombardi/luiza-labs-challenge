@@ -1,6 +1,6 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { GetCustomer } from '../../../domain/usecases/customer/get-customer'
-import { LoadCustomerByIdRepository } from '../../protocols/db/customer/load-customer-by-id-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { GetCustomer } from '../../../../domain/usecases/customer/get-customer'
+import { LoadCustomerByIdRepository } from '../../../protocols/db/customer/load-customer-by-id-repository'
 
 export class DbGetCustomer implements GetCustomer {
   constructor(

@@ -1,9 +1,9 @@
-import { CustomerModel } from '../../../domain/models/customer'
+import { CustomerModel } from '../../../../domain/models/customer'
 import {
   UpdateCustomer,
   UpdateCustomerModel
-} from '../../../domain/usecases/customer/update-customer'
-import { UpdateCustomerRepository } from '../../protocols/db/customer/update-customer-repository'
+} from '../../../../domain/usecases/customer/update-customer'
+import { UpdateCustomerRepository } from '../../../protocols/db/customer/update-customer-repository'
 
 export class DbUpdateCustomer implements UpdateCustomer {
   constructor(

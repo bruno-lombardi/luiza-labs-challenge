@@ -1,4 +1,4 @@
-import { DbUpdateCustomer } from '../../../data/usecases/update-customer/db-update-costumer'
+import { DbUpdateCustomer } from '../../../data/usecases/customer/update-customer/db-update-costumer'
 import { CustomerMongoRepository } from '../../../infra/db/mongodb/customer/customer-repository'
 import { LogMongoRepository } from '../../../infra/db/mongodb/log/log-repository'
 import { UpdateCustomerController } from '../../../presentation/controllers/customer/update-customer-controller'

@@ -1,4 +1,4 @@
-import { DbGetCustomer } from '../../../data/usecases/get-customer/db-get-customer'
+import { DbGetCustomer } from '../../../data/usecases/customer/get-customer/db-get-customer'
 import { CustomerMongoRepository } from '../../../infra/db/mongodb/customer/customer-repository'
 import { LogMongoRepository } from '../../../infra/db/mongodb/log/log-repository'
 import { GetCustomerController } from '../../../presentation/controllers/customer/get-customer-controller'

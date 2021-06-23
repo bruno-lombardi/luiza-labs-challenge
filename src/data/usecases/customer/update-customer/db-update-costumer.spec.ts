@@ -1,6 +1,6 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { UpdateCustomerModel } from '../../../domain/usecases/customer/update-customer'
-import { UpdateCustomerRepository } from '../../protocols/db/customer/update-customer-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { UpdateCustomerModel } from '../../../../domain/usecases/customer/update-customer'
+import { UpdateCustomerRepository } from '../../../protocols/db/customer/update-customer-repository'
 import { DbUpdateCustomer } from './db-update-costumer'
 
 const makeFakeCustomer = (): CustomerModel => ({

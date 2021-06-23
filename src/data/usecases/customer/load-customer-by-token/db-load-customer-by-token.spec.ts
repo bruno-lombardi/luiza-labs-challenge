@@ -1,6 +1,6 @@
-import { CustomerModel } from '../../../domain/models/customer'
-import { Decrypter } from '../../protocols/crypto/decrypter'
-import { LoadCustomerByTokenRepository } from '../../protocols/db/customer/load-customer-by-token-repository'
+import { CustomerModel } from '../../../../domain/models/customer'
+import { Decrypter } from '../../../protocols/crypto/decrypter'
+import { LoadCustomerByTokenRepository } from '../../../protocols/db/customer/load-customer-by-token-repository'
 import { DbLoadCustomerByToken } from './db-load-customer-by-token'
 
 const makeFakeCustomer = (): CustomerModel => ({
