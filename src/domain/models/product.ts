@@ -4,5 +4,5 @@ export interface ProductModel {
   image: string
   brand: string
   title: string
-  reviewScore: number
+  reviewScore?: number
 }
