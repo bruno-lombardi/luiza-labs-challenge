@@ -90,7 +90,7 @@ describe('HttpProductsApi', () => {
       const { sut, httpClientStub } = makeSut()
       const getSpy = jest.spyOn(httpClientStub, 'get')
       await sut.getProductById('any_id')
-      expect(getSpy).toHaveBeenCalledWith('/product/any_id')
+      expect(getSpy).toHaveBeenCalledWith('/product/any_id/')
     })
 
     it('should throw if httpClient throws', async () => {

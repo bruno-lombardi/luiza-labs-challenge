@@ -18,6 +18,6 @@ export class HttpProductsApi
   }
 
   async getProductById(productId: string): Promise<ProductModel> {
-    return await this.httpClient.get<ProductModel>(`/product/${productId}`)
+    return await this.httpClient.get<ProductModel>(`/product/${productId}/`)
   }
 }

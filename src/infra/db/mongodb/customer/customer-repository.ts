@@ -54,8 +54,9 @@ export class CustomerMongoRepository
   ): Promise<void> {
     const customerCollection = await mongoHelper.getCollection('customers')
     const { customerId, token } = updateAccessTokenModel
+    const _id = new ObjectID(customerId)
     await customerCollection.updateOne(
-      { _id: customerId },
+      { _id },
       { $set: { accessToken: token } }
     )
   }

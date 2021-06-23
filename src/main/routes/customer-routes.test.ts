@@ -1,12 +1,24 @@
 import { Collection, ObjectID } from 'mongodb'
+import axios from 'axios'
+
 import { mongoHelper } from '../../infra/db/mongodb/helpers/mongo-helper'
 import request from 'supertest'
 import app from '../config/app'
 import { CustomerModel } from '../../domain/models/customer'
 import { sign } from 'jsonwebtoken'
 import jwtConfig from '../config/jwt'
+import { ProductModel } from '../../domain/models/product'
 
 let customerCollection: Collection
+
+const makeFakeProduct = (): ProductModel => ({
+  price: 999.0,
+  image: 'any_image_url',
+  brand: 'any_brand',
+  id: 'product_id',
+  title: 'any_title',
+  reviewScore: 4.0
+})
 
 const makeValidAccessToken = async (userId: ObjectID): Promise<string> => {
   const accessToken = sign({ id: userId.toHexString() }, jwtConfig.jwtSecret)
@@ -22,6 +34,7 @@ const makeValidAccessToken = async (userId: ObjectID): Promise<string> => {
   )
   return `Bearer ${accessToken}`
 }
+// Mock axios response to return valid product
 
 describe('Customer Routes', () => {
   beforeAll(async () => {
@@ -214,6 +227,123 @@ describe('Customer Routes', () => {
         .delete(`/api/customers/${anotherCustomerId.toHexString()}`)
         .set('authorization', accessToken)
         .expect(403)
+    })
+  })
+
+  describe('PUT /customers/:customerId/product/:productId', () => {
+    it('should return 200 on PUT /customers/:customerId/product/:productId with valid customerId and productId', async () => {
+      const spy = jest.spyOn(axios, 'get').mockReturnValueOnce(
+        new Promise((resolve) =>
+          resolve({
+            status: 200,
+            data: makeFakeProduct()
+          })
+        )
+      )
+
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .put(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(200)
+      spy.mockRestore()
+    })
+
+    it('should return a customer with favorite product on PUT /customers/:customerId/product/:productId with valid customerId and productId', async () => {
+      const spy = jest.spyOn(axios, 'get').mockReturnValueOnce(
+        new Promise((resolve) =>
+          resolve({
+            status: 200,
+            data: makeFakeProduct()
+          })
+        )
+      )
+
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .put(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(200)
+        .then((res) => {
+          const customer = res.body as CustomerModel
+          expect(customer.id).toBe(fakeCustomerId.toHexString())
+          expect(customer.favoriteProducts.length).toBe(1)
+          expect(customer.favoriteProducts[0]).toEqual(makeFakeProduct())
+        })
+      spy.mockRestore()
+    })
+
+    it('should return 403 on PUT /customers/:customerId/product/:productId when access token that belongs to other user', async () => {
+      const spy = jest.spyOn(axios, 'get').mockReturnValueOnce(
+        new Promise((resolve) =>
+          resolve({
+            status: 200,
+            data: makeFakeProduct()
+          })
+        )
+      )
+      const anotherCustomerResult = await customerCollection.insertOne({
+        name: 'Ana',
+        email: 'ana@kuppi.com.br'
+      })
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const anotherCustomerId = anotherCustomerResult.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(anotherCustomerId)
+
+      await request(app)
+        .put(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(403)
+      spy.mockRestore()
+    })
+
+    it('should return 404 on PUT /customers/:customerId/product/:productId when product is not found', async () => {
+      const spy = jest.spyOn(axios, 'get').mockImplementationOnce(() => {
+        const error = new Error()
+        console.log('erroring')
+        Object.assign(error, { response: { status: 404 } })
+        throw error
+      })
+
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br'
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .put(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(404)
+        .then((res) => {
+          console.log(res.body)
+        })
+      spy.mockRestore()
     })
   })
 })

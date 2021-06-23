@@ -9,10 +9,13 @@ import { makeDeleteCustomerValidation } from './delete-customer-validation-facto
 export const makeDeleteCustomerController = (): Controller => {
   const customerMongoRepository = new CustomerMongoRepository()
   const dbDeleteCustomer = new DbDeleteCustomer(customerMongoRepository)
-  const getCustomerController = new DeleteCustomerController(
+  const deleteCustomerController = new DeleteCustomerController(
     makeDeleteCustomerValidation(),
     dbDeleteCustomer
   )
   const logMongoRepository = new LogMongoRepository()
-  return new LogControllerDecorator(getCustomerController, logMongoRepository)
+  return new LogControllerDecorator(
+    deleteCustomerController,
+    logMongoRepository
+  )
 }

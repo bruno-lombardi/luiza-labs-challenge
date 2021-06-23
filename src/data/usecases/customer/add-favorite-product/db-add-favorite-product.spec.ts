@@ -107,16 +107,16 @@ describe('DbAddFavoriteProduct UseCase', () => {
     expect(promise).rejects.toThrow()
   })
 
-  it('should return null if GetProductByIdRepository returns null', async () => {
+  it('should throw ProductNotFoundError if GetProductByIdRepository returns null', async () => {
     const { sut, getProductByIdRepositoryStub } = makeSut()
     jest
       .spyOn(getProductByIdRepositoryStub, 'getProductById')
       .mockReturnValueOnce(new Promise((resolve) => resolve(null)))
-    const customer = await sut.addFavoriteProductToCustomer(
+    const promise = sut.addFavoriteProductToCustomer(
       'product_id',
       'customer_id'
     )
-    expect(customer).toBe(null)
+    expect(promise).rejects.toThrow('This product was not found')
   })
 
   it('should call FindCustomerFavoriteProductRepository with customer and product id', async () => {
