@@ -8,15 +8,15 @@ services:
       - ./data:/data/db
     ports:
       - "27017:27017"
-  docs:
-    container_name: docs-container
-    image: node:12
-    working_dir: /usr/src/favorite-products-api/docs
-    command: bash -c "yarn add serve && yarn serve"
-    volumes:
-      - ./docs/:/usr/src/favorite-products-api/docs/
-    ports:
-      - "5000:5000"
+  # docs:
+  #   container_name: docs-container
+  #   image: node:12
+  #   working_dir: /usr/src/favorite-products-api/docs
+  #   command: bash -c "yarn add serve && yarn serve"
+  #   volumes:
+  #     - ./docs/:/usr/src/favorite-products-api/docs/
+  #   ports:
+  #     - "5000:5000"
   api:
     container_name: api-container
     image: node:12
@@ -24,6 +24,7 @@ services:
     restart: always
     command: bash -c "yarn install --production && yarn run debug"
     environment:
+      - NODE_ENV=production
       - MONGO_URL=mongodb://mongo:27017/favorite-products
       - PRODUCTS_API_URL=http://challenge-api.luizalabs.com/api
     volumes:
