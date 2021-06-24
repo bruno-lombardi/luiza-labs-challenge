@@ -2,3 +2,4 @@ node_modules
 dist
 coverage
 jest-mongodb-config.js
+docs
