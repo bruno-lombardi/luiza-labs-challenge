@@ -7,8 +7,14 @@ import {
 } from '../../../domain/usecases/customer/add-customer'
 import { CustomerModel } from '../../../domain/models/customer'
 import { HttpRequest } from '../../protocols/http'
-import { badRequest, ok, serverError } from '../../helpers/http-helper'
+import {
+  badRequest,
+  conflict,
+  ok,
+  serverError
+} from '../../helpers/http-helper'
 import { Validation } from '../../protocols/validation'
+import CustomerAlreadyExistsError from '../../errors/customer-already-exists-error'
 
 interface SutTypes {
   sut: SignUpController
@@ -71,15 +77,6 @@ describe('SignUpController', () => {
     })
   })
 
-  it('should return 500 if AddCustomer throws exception', async () => {
-    const { sut, addCustomerStub } = makeSut()
-    jest.spyOn(addCustomerStub, 'add').mockImplementationOnce(async () => {
-      return await new Promise((resolve, reject) => reject(new Error()))
-    })
-    const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(serverError(new ServerError()))
-  })
-
   it('should return 200 if valid data is provided', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
@@ -101,5 +98,28 @@ describe('SignUpController', () => {
       .mockReturnValueOnce(new MissingParamError('any_field'))
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
+  })
+
+  it('should return 409 if AddCustomer throws CustomerAlreadyExistsError', async () => {
+    const { sut, addCustomerStub } = makeSut()
+    const customerAlreadyExists = new CustomerAlreadyExistsError(
+      'Customer already exists'
+    )
+    jest.spyOn(addCustomerStub, 'add').mockImplementationOnce(async () => {
+      return await new Promise((resolve, reject) =>
+        reject(customerAlreadyExists)
+      )
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(conflict(customerAlreadyExists))
+  })
+
+  it('should return 500 if AddCustomer throws exception', async () => {
+    const { sut, addCustomerStub } = makeSut()
+    jest.spyOn(addCustomerStub, 'add').mockImplementationOnce(async () => {
+      return await new Promise((resolve, reject) => reject(new Error()))
+    })
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(serverError(new ServerError()))
   })
 })

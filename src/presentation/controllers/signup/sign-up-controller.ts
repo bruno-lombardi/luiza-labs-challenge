@@ -1,8 +1,14 @@
-import { badRequest, ok, serverError } from '../../helpers/http-helper'
+import {
+  badRequest,
+  conflict,
+  ok,
+  serverError
+} from '../../helpers/http-helper'
 import { Controller } from '../../protocols/controller'
 import { HttpRequest, HttpResponse } from '../../protocols/http'
 import { AddCustomer } from '../../../domain/usecases/customer/add-customer'
 import { Validation } from '../../protocols/validation'
+import CustomerAlreadyExistsError from '../../errors/customer-already-exists-error'
 
 interface SignUpRequestBody {
   name: string
@@ -29,6 +35,9 @@ export class SignUpController implements Controller {
       })
       return ok(customer)
     } catch (err) {
+      if (err instanceof CustomerAlreadyExistsError) {
+        return conflict(err)
+      }
       return serverError(err)
     }
   }

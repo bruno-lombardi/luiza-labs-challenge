@@ -1,6 +1,7 @@
 import { CustomerModel } from '../../../../domain/models/customer'
 import { AddCustomerModel } from '../../../../domain/usecases/customer/add-customer'
 import { AddCustomerRepository } from '../../../protocols/db/customer/add-customer-repository'
+import { LoadCustomerByEmailRepository } from '../../../protocols/db/customer/load-customer-by-email-repository'
 import { DbAddCustomer } from './db-add-customer'
 
 const makeFakeCustomerData = (): AddCustomerModel => ({
@@ -24,17 +25,33 @@ const makeAddCustomerRepository = (): AddCustomerRepository => {
   return new AddCustomerRepositoryStub()
 }
 
+const makeLoadCustomerByEmailRepository = (): LoadCustomerByEmailRepository => {
+  class LoadCustomerByEmailRepositoryStub
+    implements LoadCustomerByEmailRepository {
+    async loadByEmail(email: string): Promise<CustomerModel> {
+      return await new Promise((resolve) => resolve(null))
+    }
+  }
+  return new LoadCustomerByEmailRepositoryStub()
+}
+
 interface SutTypes {
   sut: DbAddCustomer
   addCustomerRepositoryStub: AddCustomerRepository
+  loadCustomerByEmailRepository: LoadCustomerByEmailRepository
 }
 
 const makeSut = (): SutTypes => {
   const addCustomerRepositoryStub = makeAddCustomerRepository()
-  const sut = new DbAddCustomer(addCustomerRepositoryStub)
+  const loadCustomerByEmailRepository = makeLoadCustomerByEmailRepository()
+  const sut = new DbAddCustomer(
+    addCustomerRepositoryStub,
+    loadCustomerByEmailRepository
+  )
   return {
     sut,
-    addCustomerRepositoryStub
+    addCustomerRepositoryStub,
+    loadCustomerByEmailRepository
   }
 }
 
@@ -45,11 +62,23 @@ describe('DbAddCustomer UseCase', () => {
     await sut.add(makeFakeCustomerData())
     expect(addSpy).toHaveBeenCalledWith({
       name: 'valid_name',
-      email: 'valid_email@email.com'
+      email: 'valid_email@email.com',
+      favoriteProducts: []
     })
   })
 
-  it('should throw if repository throws exception', async () => {
+  it('should throw CustomerAlreadyExistsError if customer already exists', async () => {
+    const { sut, loadCustomerByEmailRepository } = makeSut()
+    jest
+      .spyOn(loadCustomerByEmailRepository, 'loadByEmail')
+      .mockReturnValueOnce(
+        new Promise((resolve) => resolve(makeFakeCustomer()))
+      )
+    const promise = sut.add(makeFakeCustomerData())
+    await expect(promise).rejects.toThrow('Customer already exists')
+  })
+
+  it('should throw if AddCustomerRepository throws exception', async () => {
     const { sut, addCustomerRepositoryStub } = makeSut()
     jest
       .spyOn(addCustomerRepositoryStub, 'add')

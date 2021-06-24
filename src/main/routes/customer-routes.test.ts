@@ -322,7 +322,6 @@ describe('Customer Routes', () => {
     it('should return 404 on PUT /customers/:customerId/product/:productId when product is not found', async () => {
       const spy = jest.spyOn(axios, 'get').mockImplementationOnce(() => {
         const error = new Error()
-        console.log('erroring')
         Object.assign(error, { response: { status: 404 } })
         throw error
       })
@@ -340,10 +339,87 @@ describe('Customer Routes', () => {
         )
         .set('authorization', accessToken)
         .expect(404)
-        .then((res) => {
-          console.log(res.body)
-        })
       spy.mockRestore()
+    })
+  })
+
+  describe('DELETE /customers/:customerId/product/:productId', () => {
+    it('should return 200 on DELETE /customers/:customerId/product/:productId with valid customerId and productId', async () => {
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br',
+        favoriteProducts: [makeFakeProduct()]
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .delete(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(200)
+    })
+
+    it('should return a customer without the favorited product on DELETE /customers/:customerId/product/:productId with valid customerId and productId', async () => {
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br',
+        favoriteProducts: [makeFakeProduct()]
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .delete(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(200)
+        .then((res) => {
+          const customer = res.body as CustomerModel
+          expect(customer.id).toBe(fakeCustomerId.toHexString())
+          expect(customer.favoriteProducts.length).toBe(0)
+        })
+    })
+
+    it('should return 403 on DELETE /customers/:customerId/product/:productId when access token that belongs to other user', async () => {
+      const anotherCustomerResult = await customerCollection.insertOne({
+        name: 'Ana',
+        email: 'ana@kuppi.com.br'
+      })
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br',
+        favoriteProducts: [makeFakeProduct()]
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const anotherCustomerId = anotherCustomerResult.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(anotherCustomerId)
+
+      await request(app)
+        .delete(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(403)
+    })
+
+    it('should return 404 on DELETE /customers/:customerId/product/:productId when product is not found', async () => {
+      const result = await customerCollection.insertOne({
+        name: 'Bruno',
+        email: 'bruno@kuppi.com.br',
+        favoriteProducts: []
+      })
+      const fakeCustomerId = result.insertedId as ObjectID
+      const accessToken = await makeValidAccessToken(fakeCustomerId)
+
+      await request(app)
+        .delete(
+          `/api/customers/${fakeCustomerId.toHexString()}/product/product_id`
+        )
+        .set('authorization', accessToken)
+        .expect(404)
     })
   })
 })

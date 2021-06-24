@@ -92,6 +92,14 @@ describe('GetCustomerController', () => {
     expect(httpResponse).toEqual(ok(fakeCustomer))
   })
 
+  it('should call Validation with request params', async () => {
+    const { sut, validationStub } = makeSut()
+    const validationSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validationSpy).toHaveBeenCalledWith(httpRequest.params)
+  })
+
   it('should return 400 if Validation returns error', async () => {
     const { sut, validationStub } = makeSut()
     jest

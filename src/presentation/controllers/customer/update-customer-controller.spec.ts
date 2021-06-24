@@ -3,8 +3,9 @@ import {
   UpdateCustomer,
   UpdateCustomerModel
 } from '../../../domain/usecases/customer/update-customer'
+import MissingParamError from '../../errors/missing-param-error'
 import NotFoundError from '../../errors/not-found-error'
-import { notFound, serverError } from '../../helpers/http-helper'
+import { badRequest, notFound, serverError } from '../../helpers/http-helper'
 import { HttpRequest } from '../../protocols/http'
 import { Validation } from '../../protocols/validation'
 import { UpdateCustomerController } from './update-customer-controller'
@@ -70,6 +71,26 @@ describe('UpdateCustomer Controller', () => {
     const getCustomerSpy = jest.spyOn(updateCustomerStub, 'updateCustomer')
     await sut.handle(makeFakeRequest())
     expect(getCustomerSpy).toHaveBeenCalledWith(makeFakeCustomerData())
+  })
+
+  it('should call Validation with request body and params', async () => {
+    const { sut, validationStub } = makeSut()
+    const validationSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validationSpy).toHaveBeenCalledWith({
+      ...httpRequest.params,
+      ...httpRequest.body
+    })
+  })
+
+  it('should return 400 if Validation returns error', async () => {
+    const { sut, validationStub } = makeSut()
+    jest
+      .spyOn(validationStub, 'validate')
+      .mockReturnValueOnce(new MissingParamError('any_field'))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(badRequest(new MissingParamError('any_field')))
   })
 
   it('should return 404 if customer is not found', async () => {

@@ -86,6 +86,14 @@ describe('LoginController', () => {
     expect(httpResponse).toEqual(ok({ accessToken: 'any_token' }))
   })
 
+  it('should call Validation with request body', async () => {
+    const { sut, validationStub } = makeSut()
+    const validationSpy = jest.spyOn(validationStub, 'validate')
+    const httpRequest = makeFakeRequest()
+    await sut.handle(httpRequest)
+    expect(validationSpy).toHaveBeenCalledWith(httpRequest.body)
+  })
+
   it('should return 400 if Validation returns error', async () => {
     const { sut, validationStub } = makeSut()
     jest

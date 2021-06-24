@@ -8,7 +8,10 @@ import { makeSignUpValidation } from './signup-validation-factory'
 
 export const makeSignUpController = (): Controller => {
   const customerRepository = new CustomerMongoRepository()
-  const dbAddCustomer = new DbAddCustomer(customerRepository)
+  const dbAddCustomer = new DbAddCustomer(
+    customerRepository,
+    customerRepository
+  )
   const signUpController = new SignUpController(
     dbAddCustomer,
     makeSignUpValidation()
