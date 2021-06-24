@@ -28,6 +28,7 @@ The following tools and packages were used to develop this project:
 This project is an HTTP API that allow customers to save their favorite products.
 
 ### Check it live
+
 You can access this API endpoints in your favorite API client, (I recommend Insomnia). Here are the links:
 
 - API: [https://favorite-products-challenge.herokuapp.com/api](https://favorite-products-challenge.herokuapp.com/api)
