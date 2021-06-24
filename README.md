@@ -1,3 +1,4 @@
+
 <h2 align="center">
   Favorite Products API
 </h2>
@@ -8,6 +9,10 @@
   <a href="#-principles">Principles</a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;
   <a href="#memo-license">License</a>
 </p>
+
+
+[![Build Status](https://travis-ci.com/bruno-lombardi/luiza-labs-challenge.svg?branch=master)](https://travis-ci.com/bruno-lombardi/luiza-labs-challenge)
+[![Coverage Status](https://coveralls.io/repos/github/bruno-lombardi/luiza-labs-challenge/badge.svg?branch=master)](https://coveralls.io/github/bruno-lombardi/luiza-labs-challenge?branch=master)
 
 ## :rocket: Technologies
 
