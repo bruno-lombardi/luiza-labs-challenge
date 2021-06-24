@@ -42,13 +42,16 @@
     "prebuild": "rimraf dist",
     "build": "tsc",
     "dev": "sucrase-node src/main/server.ts",
+    "build:watch": "rimraf dist && tsc -w",
+    "up": "yarn build && docker-compose up -d",
+    "down": "docker-compose down",
     "test": "jest --passWithNoTests --silent --runInBand",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "test:unit": "jest --passWithNoTests --runInBand --watch -c jest-unit-config.ts",
     "test:integration": "jest --passWithNoTests --runInBand --watch -c jest-integration-config.ts",
     "test:staged": "yarn test --findRelatedTests",
     "test:ci": "yarn test --coverage",
-    "postinstall": "husky install"
+    "post:install": "husky install"
   },
   "dependencies": {
     "axios": "^0.21.1",
